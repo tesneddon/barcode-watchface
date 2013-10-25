@@ -1,11 +1,66 @@
-
-{"friendlyVersion": "VERSION",
- "versionDefName": "VERSION",
- "media": [
-	   {
-	    "type":"raw",
-	    "defName":"DUMMY",
-	    "file":"resource_map.json"
-	   }
-	  ]
+{
+    "friendlyVersion": "VERSION",
+    "versionDefName": "APP_RESOURCES",
+    "media": [
+    	{
+	    "type":"png",
+	    "defName":"0",
+	    "file":"images/0.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"1",
+	    "file":"images/1.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"2",
+	    "file":"images/2.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"3",
+	    "file":"images/3.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"4",
+	    "file":"images/4.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"5",
+	    "file":"images/5.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"6",
+	    "file":"images/6.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"7",
+	    "file":"images/7.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"8",
+	    "file":"images/8.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"9",
+	    "file":"images/9.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"LEFT",
+	    "file":"images/left.png"
+    	},
+    	{
+	    "type":"png",
+	    "defName":"RIGHT",
+	    "file":"images/right.png"
+    	}
+    ]
 }
