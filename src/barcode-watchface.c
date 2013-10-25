@@ -200,7 +200,7 @@ void handle_tick(AppContextRef ctx,
     	}
 
 	string_format_time(text_string, sizeof(text_string),
-			   (clock_is_24h_style() ? "%k%M%S" : "%l%M%S"),
+			   (clock_is_24h_style() ? "%k%M%S" : "%I%M%S"),
 			   event->tick_time);
 	text_layer_set_text(&text_layer, text_string);
     }
