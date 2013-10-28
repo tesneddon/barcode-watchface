@@ -47,6 +47,8 @@
 **  MODIFICATION HISTORY:
 **
 **      22-OCT-2013 V1.0    Sneddon     Initial coding.
+**      28-OCT-2013 V1.1    Sneddon     Fixed 24-hour time string to include
+**					leading zeroes.
 **--
 */
 #include "pebble_os.h"
@@ -200,7 +202,7 @@ void handle_tick(AppContextRef ctx,
     	}
 
 	string_format_time(text_string, sizeof(text_string),
-			   (clock_is_24h_style() ? "%k%M%S" : "%I%M%S"),
+			   (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"),
 			   event->tick_time);
 	text_layer_set_text(&text_layer, text_string);
     }
