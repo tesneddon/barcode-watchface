@@ -1,5 +1,5 @@
 {
-    "uuid": "3ce361f0-a775-4cd0-8aff-004c596ccbb1",
+    "uuid": "08704221-9a65-403a-84b8-54de356a1041",
     "shortName": "Barcode",
     "longName": "Barcode Watchface",
     "companyName": "Tim Sneddon",
@@ -8,7 +8,6 @@
     "watchapp": {
         "watchface": true
     },
-    "appKeys": {},
     "resources": {
     	"media": [
     	    {
@@ -61,6 +60,16 @@
             	"name":"9",
             	"file":"images/9.png"
             },
+    	    {
+            	"type":"png",
+            	"name":"LEFT",
+            	"file":"images/left.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"RIGHT",
+            	"file":"images/right.png"
+            }
 	]
     }
 }
