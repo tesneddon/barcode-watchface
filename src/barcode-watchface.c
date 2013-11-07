@@ -49,6 +49,7 @@
 **      22-OCT-2013 V1.0    Sneddon     Initial coding.
 **      28-OCT-2013 V1.1    Sneddon     Fixed 24-hour time string to include
 **					leading zeroes.
+**	07-NOV-2013 V2.0    Sneddon	Make SDK 2.0 compliant.
 **--
 */
 #include <pebble.h>
@@ -75,6 +76,7 @@
     };
     static GBitmap *bar[10], *left, *right;
     static BitmapLayer *bar_layer[6], *left_layer, *right_layer;
+    static TextLayer *text_layer;
     static Window *window;
 
 /*
@@ -118,6 +120,12 @@ static void init(void) {
     bitmap_layer_set_bitmap(right_layer, right);
     layer_add_child(window_layer, bitmap_layer_get_layer(right_layer));
 
+    text_layer = text_layer_create(GRect(29, 134, 82, 21));
+    text_layer_set_font(text_layer,
+                        fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
+    text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+    layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
     /*
     ** Subscribe to event services.
     */
@@ -149,13 +157,15 @@ static void deinit(void) {
     bitmap_layer_destroy(left_layer);
     bitmap_layer_destroy(right_layer);
 
+    text_layer_destroy(text_layer);
+
     window_destroy(window);
 }
 
 static void tick(struct tm *tick_time,
 		 TimeUnits units_changed) {
 
-    char buffer[6];
+    char buffer[6+1];  /* HHMMSS + '\0' */
     int ones, tens;
 
     if (units_changed & HOUR_UNIT) {
@@ -184,6 +194,8 @@ static void tick(struct tm *tick_time,
 
     strftime(buffer, sizeof(buffer),
 	     (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"), tick_time);
+
+    text_layer_set_text(text_layer, buffer);
 }
 
 int main(void) {
