@@ -62,6 +62,7 @@
     int main(void);
     static void init(void);
     static void deinit(void);
+    static void tick(struct tm *tick_time, TimeUnits units_changed);
 
 /*
 ** Own storage
@@ -116,11 +117,21 @@ static void init(void) {
     right_layer = bitmap_layer_create(GRect(111, 10, 12, 135));
     bitmap_layer_set_bitmap(right_layer, right);
     layer_add_child(window_layer, bitmap_layer_get_layer(right_layer));
+
+    /*
+    ** Subscribe to event services.
+    */
+    tick_timer_service_subscribe(HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT, tick);
 }
 
 static void deinit(void) {
 
     unsigned i;
+
+    /*
+    ** Unsubscribe from all events.
+    */
+    tick_timer_service_unsubscribe();
 
     /*
     ** Destroy all bitmaps.
@@ -139,6 +150,40 @@ static void deinit(void) {
     bitmap_layer_destroy(right_layer);
 
     window_destroy(window);
+}
+
+static void tick(struct tm *tick_time,
+		 TimeUnits units_changed) {
+
+    char buffer[6];
+    int ones, tens;
+
+    if (units_changed & HOUR_UNIT) {
+    	tens = tick_time->tm_hour / 10;
+	ones = tick_time->tm_hour % 10;
+	if (!clock_is_24h_style() && (tick_time->tm_hour > 12)) {
+	    tens--;
+	    ones -= 2;
+	}
+
+	bitmap_layer_set_bitmap(bar_layer[0], bar[tens]);
+	bitmap_layer_set_bitmap(bar_layer[1], bar[ones]);
+    }
+    if (units_changed & MINUTE_UNIT) {
+    	tens = tick_time->tm_min / 10;
+	ones = tick_time->tm_min % 10;
+
+	bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
+	bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
+    }
+    tens = tick_time->tm_sec / 10;
+    ones = tick_time->tm_sec % 10;
+
+    bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
+    bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
+
+    strftime(buffer, sizeof(buffer),
+	     (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"), tick_time);
 }
 
 int main(void) {
