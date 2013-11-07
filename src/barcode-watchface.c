@@ -181,7 +181,7 @@ static void tick(struct tm *tick_time,
 
     static char buffer[6+1];  /* HHMMSS + '\0' */
     static unsigned show_date = 0;
-    int ones, tens;
+    int ones, tens, year;
 
     if (show_date != 0) {
 	show_date--;
@@ -201,9 +201,9 @@ static void tick(struct tm *tick_time,
 	bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
 	bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
 
-	tens = (tick_time->tm_year % 1000);
-    	ones = tens & 10;
-	tens /= 10;
+    	year = tick_time->tm_year % 1000;
+	tens = year / 10;
+    	ones = year % 10;
 
 	bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
 	bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
