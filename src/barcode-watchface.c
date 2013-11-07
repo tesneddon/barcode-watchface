@@ -63,6 +63,7 @@
     static void init(void);
     static void deinit(void);
     static void tick(struct tm *tick_time, TimeUnits units_changed);
+    static void accel_tap(AccelAxisType axis, int32_t direction);
     static void bluetooth_connection(bool connected);
     int main(void);
 
@@ -133,13 +134,14 @@ static void init(void) {
     ** Subscribe to event services.
     */
     bluetooth_connection_service_subscribe(bluetooth_connection);
+    accel_tap_service_subscribe(accel_tap);
     tick_timer_service_subscribe(HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT, tick);
 
     /*
     ** Set initial time...
     */
     now = time(0);
-    tick(localtime(&now), -1);
+    tick(localtime(&now), HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT);
 }
 
 static void deinit(void) {
@@ -150,6 +152,7 @@ static void deinit(void) {
     ** Unsubscribe from all events.
     */
     bluetooth_connection_service_unsubscribe();
+    accel_tap_service_unsubscribe();
     tick_timer_service_unsubscribe();
 
     /*
@@ -177,36 +180,75 @@ static void tick(struct tm *tick_time,
 		 TimeUnits units_changed) {
 
     static char buffer[6+1];  /* HHMMSS + '\0' */
+    static unsigned show_date = 0;
     int ones, tens;
 
-    if (units_changed & HOUR_UNIT) {
-    	tens = tick_time->tm_hour / 10;
-	ones = tick_time->tm_hour % 10;
-	if (!clock_is_24h_style() && (tick_time->tm_hour > 12)) {
-	    tens--;
-	    ones -= 2;
-	}
+    if (show_date != 0) {
+	show_date--;
+	return;
+    }
+
+    if (units_changed & DAY_UNIT) {
+	tens = tick_time->tm_mday / 10;
+	ones = tick_time->tm_mday % 10;
 
 	bitmap_layer_set_bitmap(bar_layer[0], bar[tens]);
 	bitmap_layer_set_bitmap(bar_layer[1], bar[ones]);
-    }
-    if (units_changed & MINUTE_UNIT) {
-    	tens = tick_time->tm_min / 10;
-	ones = tick_time->tm_min % 10;
+
+	tens = tick_time->tm_mon / 10;
+	ones = tick_time->tm_mon % 10;
 
 	bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
 	bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
+
+	tens = (tick_time->tm_year % 1000);
+    	ones = tens & 10;
+	tens /= 10;
+
+	bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
+	bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
+
+    	strftime(buffer, sizeof(buffer), "%d%m%y", tick_time);
+
+	show_date = 3;
+    } else {
+    	if (units_changed & HOUR_UNIT) {
+    	    tens = tick_time->tm_hour / 10;
+	    ones = tick_time->tm_hour % 10;
+	    if (!clock_is_24h_style() && (tick_time->tm_hour > 12)) {
+	    	tens--;
+	        ones -= 2;
+	    }
+
+	    bitmap_layer_set_bitmap(bar_layer[0], bar[tens]);
+	    bitmap_layer_set_bitmap(bar_layer[1], bar[ones]);
+    	}
+        if (units_changed & MINUTE_UNIT) {
+    	    tens = tick_time->tm_min / 10;
+	    ones = tick_time->tm_min % 10;
+
+	    bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
+	    bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
+    	}
+        tens = tick_time->tm_sec / 10;
+        ones = tick_time->tm_sec % 10;
+
+    	bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
+    	bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
+
+    	strftime(buffer, sizeof(buffer),
+	     	 (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"), tick_time);
     }
-    tens = tick_time->tm_sec / 10;
-    ones = tick_time->tm_sec % 10;
-
-    bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
-    bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
-
-    strftime(buffer, sizeof(buffer),
-	     (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"), tick_time);
 
     text_layer_set_text(text_layer, buffer);
+}
+
+static void accel_tap(AccelAxisType axis,
+		      int32_t direction) {
+    time_t now;
+
+    now = time(0);
+    tick(localtime(&now), DAY_UNIT);
 }
 
 static void bluetooth_connection(bool connected) {
