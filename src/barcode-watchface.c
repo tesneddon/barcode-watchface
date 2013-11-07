@@ -1,4 +1,5 @@
-/*++
+/*
+**++
 **  ABSTRACT:
 **
 **      This is a Pebble Watchface App that displays the current time as
@@ -49,21 +50,21 @@
 **      22-OCT-2013 V1.0    Sneddon     Initial coding.
 **      28-OCT-2013 V1.1    Sneddon     Fixed 24-hour time string to include
 **					leading zeroes.
-**	07-NOV-2013 V2.0    Sneddon	Make SDK 2.0 compliant.
+**	07-NOV-2013 V2.0    Sneddon	Make SDK 2.0 compliant.  Add bluetooth
+**					connection check.
 **--
 */
 #include <pebble.h>
-
-#define BAR_WIDTH 3
 
 /*
 ** Forward declarations
 */
 
-    int main(void);
     static void init(void);
     static void deinit(void);
     static void tick(struct tm *tick_time, TimeUnits units_changed);
+    static void bluetooth_connection(bool connected);
+    int main(void);
 
 /*
 ** Own storage
@@ -85,6 +86,7 @@
 
 static void init(void) {
 
+    time_t now;
     Layer *window_layer;
     unsigned i;
 
@@ -96,6 +98,7 @@ static void init(void) {
     	APP_LOG(APP_LOG_LEVEL_DEBUG, "Could not allocate window");
 	return;
     }
+    window_stack_push(window, true);
     window_layer = window_get_root_layer(window);
 
     /*
@@ -129,7 +132,14 @@ static void init(void) {
     /*
     ** Subscribe to event services.
     */
+    bluetooth_connection_service_subscribe(bluetooth_connection);
     tick_timer_service_subscribe(HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT, tick);
+
+    /*
+    ** Set initial time...
+    */
+    now = time(0);
+    tick(localtime(&now), -1);
 }
 
 static void deinit(void) {
@@ -139,6 +149,7 @@ static void deinit(void) {
     /*
     ** Unsubscribe from all events.
     */
+    bluetooth_connection_service_unsubscribe();
     tick_timer_service_unsubscribe();
 
     /*
@@ -165,7 +176,7 @@ static void deinit(void) {
 static void tick(struct tm *tick_time,
 		 TimeUnits units_changed) {
 
-    char buffer[6+1];  /* HHMMSS + '\0' */
+    static char buffer[6+1];  /* HHMMSS + '\0' */
     int ones, tens;
 
     if (units_changed & HOUR_UNIT) {
@@ -196,6 +207,13 @@ static void tick(struct tm *tick_time,
 	     (clock_is_24h_style() ? "%H%M%S" : "%I%M%S"), tick_time);
 
     text_layer_set_text(text_layer, buffer);
+}
+
+static void bluetooth_connection(bool connected) {
+
+    // buzz, light up
+    // show an image for three seconds showing the phone is not connected.
+
 }
 
 int main(void) {
