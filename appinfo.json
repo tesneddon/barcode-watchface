@@ -1,17 +1,66 @@
 {
-  "uuid": "3ce361f0-a775-4cd0-8aff-004c596ccbb1",
-  "shortName": "",
-  "longName": "",
-  "companyName": "MakeAwesomeHappen",
-  "versionCode": 1,
-  "versionLabel": "1.0.0",
-  "watchapp": {
-    "watchface": false
-  },
-  "appKeys": {
-    "dummy": 0
-  },
-  "resources": {
-    "media": []
-  }
+    "uuid": "3ce361f0-a775-4cd0-8aff-004c596ccbb1",
+    "shortName": "Barcode",
+    "longName": "Barcode Watchface",
+    "companyName": "Tim Sneddon",
+    "versionCode": 2,
+    "versionLabel": "2.0.0",
+    "watchapp": {
+        "watchface": true
+    },
+    "appKeys": {},
+    "resources": {
+    	"media": [
+    	    {
+            	"type":"png",
+            	"name":"0",
+            	"file":"images/0.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"1",
+            	"file":"images/1.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"2",
+            	"file":"images/2.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"3",
+            	"file":"images/3.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"4",
+            	"file":"images/4.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"5",
+            	"file":"images/5.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"6",
+            	"file":"images/6.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"7",
+            	"file":"images/7.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"8",
+            	"file":"images/8.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"9",
+            	"file":"images/9.png"
+            },
+	]
+    }
 }
