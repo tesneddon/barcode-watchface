@@ -69,6 +69,16 @@
             	"type":"png",
             	"name":"RIGHT",
             	"file":"images/right.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"BTDISC",
+            	"file":"images/btdisc.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"LOWBATT",
+            	"file":"images/lowbatt.png"
             }
 	]
     }
