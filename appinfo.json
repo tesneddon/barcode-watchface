@@ -79,6 +79,11 @@
             	"type":"png",
             	"name":"LOWBATT",
             	"file":"images/lowbatt.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"TICK",
+            	"file":"images/tick.png"
             }
 	]
     }
