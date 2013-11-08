@@ -57,7 +57,7 @@
 **--
 */
 #include <pebble.h>
-
+#define BATTERY_MINIMUM 15
 #define WARNING_TIMEOUT 3000
 
 /*
@@ -230,21 +230,21 @@ static void handle_tick(struct tm *tick_time,
 	tens = tick_time->tm_mday / 10;
 	ones = tick_time->tm_mday % 10;
 
-	bitmap_layer_set_bitmap(bar_layer[0], bar[1]);
-	bitmap_layer_set_bitmap(bar_layer[1], bar[1]);
+	bitmap_layer_set_bitmap(bar_layer[0], bar[tens]);
+	bitmap_layer_set_bitmap(bar_layer[1], bar[ones]);
 
 	tens = tick_time->tm_mon / 10;
 	ones = tick_time->tm_mon % 10;
 
-	bitmap_layer_set_bitmap(bar_layer[2], bar[1]);
-	bitmap_layer_set_bitmap(bar_layer[3], bar[1]);
+	bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
+	bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
 
-    	year = tick_time->tm_year % 1000;
+    	year = tick_time->tm_year % 100;
 	tens = year / 10;
     	ones = year % 10;
 
 	bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
-	bitmap_layer_set_bitmap(bar_layer[5], bar[1]);
+	bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
 
     	strftime(buffer, sizeof(buffer), "%d%m%y", tick_time);
 
@@ -294,7 +294,7 @@ static void handle_battery(BatteryChargeState charge) {
     static char discmsg[25];
 
     if (!charge.is_charging && !charge.is_plugged
-	&& (charge.charge_percent <= 95)) {
+	&& (charge.charge_percent <= BATTERY_MINIMUM)) {
     	bitmap_layer_set_bitmap(warn_layer, lowbatt);
     	snprintf(discmsg, sizeof(discmsg), "Battery at %d%% Capacity",
 		 charge.charge_percent);
@@ -335,6 +335,7 @@ static void clear_warning(void *data) {
 }
 
 int main(void) {
+
     init();
     app_event_loop();
     deinit();
