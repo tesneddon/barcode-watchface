@@ -50,11 +50,15 @@
 **      22-OCT-2013 V1.0    Sneddon     Initial coding.
 **      28-OCT-2013 V1.1    Sneddon     Fixed 24-hour time string to include
 **					leading zeroes.
-**	07-NOV-2013 V2.0    Sneddon	Make SDK 2.0 compliant.  Add bluetooth
-**					connection check.
+**	07-NOV-2013 V2.0    Sneddon	Make SDK 2.0 compliant.
+**	08-NOV-2013 V2.1    Sneddon	Add bluetooth connection check,
+**					battery level check and display date
+**					in response to tap.
 **--
 */
 #include <pebble.h>
+
+#define WARNING_TIMEOUT 3000
 
 /*
 ** Forward declarations
@@ -62,9 +66,11 @@
 
     static void init(void);
     static void deinit(void);
-    static void tick(struct tm *tick_time, TimeUnits units_changed);
-    static void accel_tap(AccelAxisType axis, int32_t direction);
-    static void bluetooth_connection(bool connected);
+    static void handle_tick(struct tm *tick_time, TimeUnits units_changed);
+    static void handle_tap(AccelAxisType axis, int32_t direction);
+    static void handle_battery(BatteryChargeState charge);
+    static void handle_bluetooth(bool connected);
+    static void clear_warning(void *data);
     int main(void);
 
 /*
@@ -76,9 +82,9 @@
     	RESOURCE_ID_4, RESOURCE_ID_5, RESOURCE_ID_6, RESOURCE_ID_7,
 	RESOURCE_ID_8, RESOURCE_ID_9,
     };
-    static GBitmap *bar[10], *left, *right;
-    static BitmapLayer *bar_layer[6], *left_layer, *right_layer;
-    static TextLayer *text_layer;
+    static GBitmap *bar[10], *left, *right, *lowbatt, *btdisc, *tick;
+    static BitmapLayer *bar_layer[6], *left_layer, *right_layer, *warn_layer;
+    static TextLayer *text_layer, *warn_text_layer;
     static Window *window;
 
 /*
@@ -103,12 +109,16 @@ static void init(void) {
     window_layer = window_get_root_layer(window);
 
     /*
-    ** Load graphics for each bar.
+    ** Load graphics...
     */
     for (i = 0; i < sizeof(bar) / sizeof(bar[0]); i++)
     	bar[i] = gbitmap_create_with_resource(BAR_RESOURCE_ID[i]);
     left = gbitmap_create_with_resource(RESOURCE_ID_LEFT);
     right = gbitmap_create_with_resource(RESOURCE_ID_RIGHT);
+
+    lowbatt = gbitmap_create_with_resource(RESOURCE_ID_LOWBATT);
+    btdisc = gbitmap_create_with_resource(RESOURCE_ID_BTDISC);
+    tick = gbitmap_create_with_resource(RESOURCE_ID_TICK);
 
     /*
     ** Initialize the layers.
@@ -131,17 +141,35 @@ static void init(void) {
     layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
     /*
+    ** Setup warning layers.
+    */
+    warn_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+    layer_set_hidden(bitmap_layer_get_layer(warn_layer), true);
+    layer_add_child(window_layer, bitmap_layer_get_layer(warn_layer));
+
+    warn_text_layer = text_layer_create(GRect(0, 100, 144, 68));
+    text_layer_set_background_color(warn_text_layer, GColorClear);
+    text_layer_set_font(warn_text_layer,
+                        fonts_get_system_font(FONT_KEY_GOTHIC_28));
+    text_layer_set_text_alignment(warn_text_layer, GTextAlignmentCenter);
+    text_layer_set_text_color(warn_text_layer, GColorWhite);
+    layer_add_child(bitmap_layer_get_layer(warn_layer),
+		    text_layer_get_layer(warn_text_layer));
+
+    /*
     ** Subscribe to event services.
     */
-    bluetooth_connection_service_subscribe(bluetooth_connection);
-    accel_tap_service_subscribe(accel_tap);
-    tick_timer_service_subscribe(HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT, tick);
+    battery_state_service_subscribe(handle_battery);
+    bluetooth_connection_service_subscribe(handle_bluetooth);
+    accel_tap_service_subscribe(handle_tap);
+    tick_timer_service_subscribe(HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT,
+				 handle_tick);
 
     /*
     ** Set initial time...
     */
     now = time(0);
-    tick(localtime(&now), HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT);
+    handle_tick(localtime(&now), HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT);
 }
 
 static void deinit(void) {
@@ -151,6 +179,7 @@ static void deinit(void) {
     /*
     ** Unsubscribe from all events.
     */
+    battery_state_service_unsubscribe();
     bluetooth_connection_service_unsubscribe();
     accel_tap_service_unsubscribe();
     tick_timer_service_unsubscribe();
@@ -163,6 +192,9 @@ static void deinit(void) {
     gbitmap_destroy(left);
     gbitmap_destroy(right);
 
+    gbitmap_destroy(btdisc);
+    gbitmap_destroy(lowbatt);
+
     /*
     ** Destroy all layers.
     */
@@ -173,17 +205,23 @@ static void deinit(void) {
 
     text_layer_destroy(text_layer);
 
+    bitmap_layer_destroy(warn_layer);
+    text_layer_destroy(warn_text_layer);
+
     window_destroy(window);
 }
 
-static void tick(struct tm *tick_time,
-		 TimeUnits units_changed) {
+static void handle_tick(struct tm *tick_time,
+		 	TimeUnits units_changed) {
 
     static char buffer[6+1];  /* HHMMSS + '\0' */
-    static unsigned show_date = 0;
+    static int show_date = 0;
     int ones, tens, year;
 
-    if (show_date != 0) {
+    if (show_date < 0) {
+	units_changed = HOUR_UNIT | MINUTE_UNIT | SECOND_UNIT;
+	show_date = 0;
+    } else if (show_date > 0) {
 	show_date--;
 	return;
     }
@@ -192,25 +230,25 @@ static void tick(struct tm *tick_time,
 	tens = tick_time->tm_mday / 10;
 	ones = tick_time->tm_mday % 10;
 
-	bitmap_layer_set_bitmap(bar_layer[0], bar[tens]);
-	bitmap_layer_set_bitmap(bar_layer[1], bar[ones]);
+	bitmap_layer_set_bitmap(bar_layer[0], bar[1]);
+	bitmap_layer_set_bitmap(bar_layer[1], bar[1]);
 
 	tens = tick_time->tm_mon / 10;
 	ones = tick_time->tm_mon % 10;
 
-	bitmap_layer_set_bitmap(bar_layer[2], bar[tens]);
-	bitmap_layer_set_bitmap(bar_layer[3], bar[ones]);
+	bitmap_layer_set_bitmap(bar_layer[2], bar[1]);
+	bitmap_layer_set_bitmap(bar_layer[3], bar[1]);
 
     	year = tick_time->tm_year % 1000;
 	tens = year / 10;
     	ones = year % 10;
 
 	bitmap_layer_set_bitmap(bar_layer[4], bar[tens]);
-	bitmap_layer_set_bitmap(bar_layer[5], bar[ones]);
+	bitmap_layer_set_bitmap(bar_layer[5], bar[1]);
 
     	strftime(buffer, sizeof(buffer), "%d%m%y", tick_time);
 
-	show_date = 3;
+	show_date = 2;
     } else {
     	if (units_changed & HOUR_UNIT) {
     	    tens = tick_time->tm_hour / 10;
@@ -243,19 +281,57 @@ static void tick(struct tm *tick_time,
     text_layer_set_text(text_layer, buffer);
 }
 
-static void accel_tap(AccelAxisType axis,
-		      int32_t direction) {
+static void handle_tap(AccelAxisType axis,
+		       int32_t direction) {
     time_t now;
 
     now = time(0);
-    tick(localtime(&now), DAY_UNIT);
+    handle_tick(localtime(&now), DAY_UNIT);
 }
 
-static void bluetooth_connection(bool connected) {
+static void handle_battery(BatteryChargeState charge) {
 
-    // buzz, light up
-    // show an image for three seconds showing the phone is not connected.
+    static char discmsg[25];
 
+    if (!charge.is_charging && !charge.is_plugged
+	&& (charge.charge_percent <= 95)) {
+    	bitmap_layer_set_bitmap(warn_layer, lowbatt);
+    	snprintf(discmsg, sizeof(discmsg), "Battery at %d%% Capacity",
+		 charge.charge_percent);
+	text_layer_set_text(warn_text_layer, discmsg);
+	layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
+	vibes_long_pulse();
+	light_enable(true);
+    	app_timer_register(WARNING_TIMEOUT, clear_warning, 0);
+    }
+}
+
+static void handle_bluetooth(bool connected) {
+
+    static const char connmsg[] = "Connection Restored";
+    static const char discmsg[] = "Connection to Phone Lost";
+
+    if (!connected) {
+    	bitmap_layer_set_bitmap(warn_layer, btdisc);
+	text_layer_set_text(warn_text_layer, discmsg);
+	layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
+	vibes_long_pulse();
+	light_enable(true);
+    	app_timer_register(WARNING_TIMEOUT, clear_warning, 0);
+    } else {
+    	bitmap_layer_set_bitmap(warn_layer, tick);
+	text_layer_set_text(warn_text_layer, connmsg);
+	layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
+	vibes_long_pulse();
+	light_enable(true);
+    	app_timer_register(WARNING_TIMEOUT, clear_warning, 0);
+    }
+}
+
+static void clear_warning(void *data) {
+
+    light_enable(false);
+    layer_set_hidden(bitmap_layer_get_layer(warn_layer), true);
 }
 
 int main(void) {
