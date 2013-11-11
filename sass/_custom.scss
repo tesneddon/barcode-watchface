@@ -1,1 +1,76 @@
 // Your custom SCSS should be written here...
+
+.meta-nav li {
+    display: inline;
+    margin-left: 20px;
+    @include font-size(ms(-1));
+    @include respond(portrait-phones) {
+	margin-left: 10px;
+    }
+}
+
+.navbar {
+    margin-bottom: 0;
+    padding: 10px 0;
+    .field i.icon-search {
+	position: absolute;
+	top: 1px;
+	right: 3px;
+    }
+
+    .logo a img {
+    	padding-top: 5px;
+    }
+}
+
+#foot-links {
+    .two.columns {
+	@include respond(portrait-tablets) {
+	    width: 25% !important;
+	    float: left;
+	    margin-bottom: 30px;
+	}
+    }
+    ul {
+	margin-bottom: 20px;
+	@include fancytiles(8,8,4);
+	li {
+	    @include font-size($small);
+	    &:first-child a {
+		font-weight: bold;
+	    }
+	}
+    }
+}
+
+#masthead {
+    background: url('/img/parallax.jpg') no-repeat #000;
+    @include background-size(cover);
+    @include respond(portrait-phones) {
+	background-position: -100px 0;
+	background-size: auto;
+    }
+    h1, p {
+	color: #fff;
+    }
+    .valign {
+	height: 400px;
+    }
+}
+
+#highlights {
+    padding-top: 40px;
+    padding-bottom: 20px;
+    figure {
+	figcaption {
+	    @include font-size($med);
+	}
+	@include respond(portrait-tablets) {
+		margin-bottom: 50px;
+	}
+    }
+}
+
+#foot-links {
+    border-top: solid 1px #eeeeee;
+}

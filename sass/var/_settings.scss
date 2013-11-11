@@ -3,9 +3,9 @@
 
 
 // Grid Settings
-$row-max-width: 940px !default;    				// 940px
+$row-max-width: 960px !default;    				// 940px
 $gutter-in-px: 20px !default;      				// 20px
-$cols: 12 !default;              				// 12 Column Default Grid
+$cols: 14 !default;              				// 12 Column Default Grid
 $hybrid: 16 !default;							// 16 Column Default Hybrid Grid
 
 // Responsiveness Settings
@@ -68,15 +68,15 @@ $absurd: ms(10);
 
 // Typography Colors
 $header-font-color: #444444 !default;
-$header-link-color: #d04526 !default;
+$header-link-color: #004185;
 $header-link-hover-color: #c03d20 !default;
-$body-font-color: #555555 !default;
-$body-link-color: #d04526 !default;
-$body-link-hover-color: #c03d20 !default;
+$body-font-color: #004185;
+$body-link-color: #004185;
+$body-link-hover-color: #00a1e4;
 
 // User Interface Colors
 $global-bg-color: #fff;
-$navbar-color: #4a4d50;
+$navbar-color: #00a1e4;
 $navbar-link-color: #fff;
 
 $primary-color: #3085d6;
@@ -90,7 +90,7 @@ $success-color: #58c026;
 $primary-hover-color: #58b2fa;
 $secondary-hover-color: #6dbb80;
 $default-hover-color: #ffffff;
-$info-hover-color: #868d92;
+$info-hover-color: #006db5;
 $danger-hover-color: #f14f4f;
 $warning-hover-color: #fdd27f;
 $success-hover-color: #66d92f;
