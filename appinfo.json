@@ -5,6 +5,7 @@
     "companyName": "Endless Software Solutions",
     "versionCode": 2,
     "versionLabel": "2.0.0",
+    "capabilities": [ "configurable" ],
     "watchapp": {
         "watchface": true
     },
