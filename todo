@@ -1,6 +1,25 @@
+* Project webpage - ESS
+* Need configuration page for below...
 * Configuration for Watchface.
     * Does the tap show the date?
+    * Does tap show the weather?
     * What level do we complain about the battery?
     * Do we complain about the phone losing connection?
 * Can we get access to any button?
 * Comments!
+
+* Use ESS colour scheme...
+
+* Configuration...
+  -- we need to fetch the existing persistent data from the phone
+  -- build it
+  -- send it to the form (as arguments)
+  -- adjust with the form
+  -- return
+  -- send back to store in persistent data
+
+* When the app is brought to the foreground, we need to work out we are
+  being configured and display the configuration image (the cogs)
+
+* When we are done, display "Tick" and "Configuration Complete!"  Then we
+  need to go.
