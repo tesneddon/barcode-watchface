@@ -1,3 +1,5 @@
+.lock-waf_linux2_build
+build/
 .sass-cache/
 css/gumby.css
 js/gumby.min.js
