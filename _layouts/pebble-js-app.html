@@ -1,0 +1,32 @@
+{% include header.html %}
+
+<div>
+
+    {{ content }}
+
+    <div class="row">
+    	<!-- submit and cancel buttons here -->
+    </div>
+</div>
+
+<script>
+    $().ready(function() {
+        $("#b-cancel").click(function() {
+            console.log("Cancel");
+            document.location = "pebblejs://close#";
+        });
+
+        $("#b-submit").click(function() {
+            console.log("Submit");
+
+            var location = "pebblejs://close#"
+			 + encodeURIComponent(JSON.stringify(saveOptions()));
+            console.log("Warping to: " + location);
+            console.log(location);
+            document.location = location;
+        });
+
+    });
+</script>
+
+{% include footer.html %}
