@@ -1,32 +1,40 @@
 {% include header.html %}
 
-<div>
+<div id="pebble-options">
 
-    {{ content }}
+  {{ content }}
 
-    <div class="row">
-    	<!-- submit and cancel buttons here -->
+  <div class="row">
+    <div class="fourteen columns">
+      <div class="medium info pretty btn">
+        <button id="b-cancel">Cancel</button>
+      </div>
+      <div class="medium default pretty btn">
+        <input id="b-submit" type="submit" value="Submit"/>
+      </div>
     </div>
+  </div>
 </div>
 
+{% include script.html %}
+
 <script>
-    $().ready(function() {
-        $("#b-cancel").click(function() {
-            console.log("Cancel");
-            document.location = "pebblejs://close#";
-        });
-
-        $("#b-submit").click(function() {
-            console.log("Submit");
-
-            var location = "pebblejs://close#"
-			 + encodeURIComponent(JSON.stringify(saveOptions()));
-            console.log("Warping to: " + location);
-            console.log(location);
-            document.location = location;
-        });
-
+  $(document).ready(function() {
+    $("#b-cancel").click(function() {
+      console.log("Cancel");
+      document.location = "pebblejs://close#";
     });
+
+    $("#b-submit").click(function() {
+      console.log("Submit");
+
+      var location = "pebblejs://close#"
+			 + encodeURIComponent(JSON.stringify(saveOptions()));
+      console.log("Warping to: " + location);
+      console.log(location);
+      document.location = location;
+    });
+  });
 </script>
 
 {% include footer.html %}

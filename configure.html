@@ -5,29 +5,34 @@ title: Configure
 
 ---
 
-<div class="row">
-    <div class="">
-	<button id="batt-warn">Battery Warning</button>
-    </div>
-    <div class="">
-	<field>Minimum Capacity</field><value></value>%
-    </div>
-</div>
+<fieldset>
+  <legend>Battery Warning</legend>
+  <ul>
+    <li class="field">
+      <div data-role="fieldcontain">
+        <label class="inline" for="battery-warning">
+          Enable Battery Warning
+        </label>
+        <select id="battery-warning" data-role="slider">
+          <option value="on">On</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+    </li>
+  </ul>
+</fieldset>
 
-<hr/>
-
-<div class="row">
-    <div class="">
-	<toggle>Bluetooth Connection Warning</toggle>
-    </div>
-    <div class="">
-	<toggle>>Wait for Reconnection</toggle>
-	<field>Maximum Wait for Reconnection</field><value></value>
-    </div>
-</div>
 
 <script>
-    $('#batt-warn').
+  $(function() {
+    $('#bluetooth-connection').change(function() {
+      // same as below
+    });
 
-
+    $('#battery-warning').change(function() {
+      //  if self is true, then ungrey minimu capacity
+      // else
+      //  grey the min. cap.
+    });
+  });
 </script>
