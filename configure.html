@@ -8,31 +8,45 @@ title: Configure
 <fieldset>
   <legend>Battery Warning</legend>
   <ul>
-    <li class="field">
-      <div data-role="fieldcontain">
-        <label class="inline" for="battery-warning">
-          Enable Battery Warning
+    <li class="field inline">
+      <span>Enable Battery Warning</span>
+      <div class="onoffswitch">
+        <input id="battery-warning" type="checkbox" name="onoffswitch"
+               class="onoffswitch-checkbox" />
+        <label class="onoffswitch-label" for="battery-warning">
+          <div class="onoffswitch-inner">
+            <div class="onoffswitch-active">
+              <div class="onoffswitch-switch">ON</div>
+            </div>
+            <div class="onoffswitch-inactive">
+              <div class="onoffswitch-switch">OFF</div>
+            </div>
+          </div>
         </label>
-        <select id="battery-warning" data-role="slider">
-          <option value="on">On</option>
-          <option value="off">Off</option>
-        </select>
       </div>
     </li>
   </ul>
 </fieldset>
 
-
-<script>
-  $(function() {
-    $('#bluetooth-connection').change(function() {
-      // same as below
-    });
-
-    $('#battery-warning').change(function() {
-      //  if self is true, then ungrey minimu capacity
-      // else
-      //  grey the min. cap.
-    });
-  });
-</script>
+<fieldset>
+  <legend>Bluetooth Connection Warning</legend>
+  <ul>
+    <li class="field">
+      <span>Enable Connection Warning</span>
+      <div class="onoffswitch">
+        <input id="connection-warning" type="checkbox" name="onoffswitch"
+               class="onoffswitch-checkbox" checked />
+        <label class="onoffswitch-label" for="connection-warning">
+          <div class="onoffswitch-inner">
+            <div class="onoffswitch-active">
+              <div class="onoffswitch-switch">ON</div>
+            </div>
+            <div class="onoffswitch-inactive">
+              <div class="onoffswitch-switch">OFF</div>
+            </div>
+          </div>
+        </label>
+      </div>
+    </li>
+  </ul>
+</fieldset>
