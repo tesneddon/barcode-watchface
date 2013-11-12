@@ -1,6 +1,25 @@
 {
-	"build": {
-		"gumbyPath": "bower_components/gumby",
-		"outPath": "js"
-	}
+        "build": {
+                "gumbyPath": "bower_components/gumby",
+                "outPath": "js",
+                "modules": [
+                        "gumby.checkbox.js",
+                        "gumby.fixed.js",
+                        "gumby.navbar.js",
+                        "gumby.radiobtn.js",
+                        "gumby.retina.js",
+                        "gumby.skiplink.js",
+                        "gumby.tabs.js",
+                        "gumby.toggleswitch.js",
+                        "jquery.validation.js"
+                ],
+                "addons": [
+                        "bower_components/gumby-parallax/gumby.parallax.js",
+                        "bower_components/gumby-images/gumby.images.js",
+                        "bower_components/gumby-shuffle/gumby.shuffle.js",
+                        "bower_components/gumby-fittext/gumby.fittext.js"
+                ],
+                "files": [],
+                "buildSourceMap": false,                "quiet": false
+        }
 }
