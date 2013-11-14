@@ -185,7 +185,7 @@ static void handle_bluetooth(bool connected) {
     if (!connected) {
 	notify(discmsg, btdisc);
     } else {
-	notify(connmsg, 0);
+	notify(connmsg, NOTIFY_SUCCESS);
     }
 }
 
