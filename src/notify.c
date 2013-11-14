@@ -58,6 +58,7 @@
 **--
 */
 #include <pebble.h>
+#include "notify.h"
 #define BATTERY_MINIMUM 15
 #define WARNING_TIMEOUT 3000
 
@@ -156,6 +157,7 @@ void notify_deinit(void) {
     	gbitmap_destroy(lowbatt);
     }
 
+    gbitmap_destroy(cross);
     gbitmap_destroy(tick);
 
     /*
