@@ -52,6 +52,9 @@
 #define BATTERY_MINIMUM 15
 #define WARNING_TIMEOUT 3000
 
+#define NOTIFY_SUCCESS ((GBitmap *) 0)
+#define NOTIFY_FAILURE ((GBitmap *) -1)
+
 /*
 **  NOTIFY
 */

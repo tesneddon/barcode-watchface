@@ -13,6 +13,16 @@
     	"media": [
     	    {
             	"type":"png",
+            	"name":"CROSS",
+            	"file":"images/cross.png"
+            }
+    	    {
+            	"type":"png",
+            	"name":"TICK",
+            	"file":"images/tick.png"
+            },
+    	    {
+            	"type":"png",
             	"name":"0",
             	"file":"images/0.png"
             },
@@ -80,11 +90,6 @@
             	"type":"png",
             	"name":"LOWBATT",
             	"file":"images/lowbatt.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"TICK",
-            	"file":"images/tick.png"
             }
 	]
     }

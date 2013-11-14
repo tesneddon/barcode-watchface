@@ -54,6 +54,7 @@
 **  MODIFICATION HISTORY:
 **
 **      10-NOV-2013 V1.0    Sneddon     Initial coding.
+**	14-NOV-2013 V1.1    Sneddon	Add NOTIFY_[SUCCESS|FALIURE] constants.
 **--
 */
 #include <pebble.h>
@@ -76,14 +77,17 @@
 */
 
     static bool subscribed = false;
-    static GBitmap *lowbatt, *btdisc, *tick;
+    static GBitmap *lowbatt, *btdisc, *tick, *cross;
     static BitmapLayer *warn_layer;
     static TextLayer *warn_text_layer;
 
 void notify(const char *message,
             GBitmap *icon) {
 
-    bitmap_layer_set_bitmap(warn_layer, (icon == 0 ? tick : icon));
+    bitmap_layer_set_bitmap(warn_layer,
+			    (icon == NOTIFY_FAILURE ? cross :
+			     icon == NOTIFY_SUCCESS ? tick  : icon));
+
     text_layer_set_text(warn_text_layer, message);
     layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
     vibes_long_pulse();
@@ -99,6 +103,7 @@ void notify_init(bool subscribe,
     /*
     ** Load graphics...
     */
+    cross = gbitmap_create_with_resource(RESOURCE_ID_CROSS);
     tick = gbitmap_create_with_resource(RESOURCE_ID_TICK);
 
     /*
