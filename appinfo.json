@@ -78,7 +78,7 @@
             },
     	    {
             	"type":"png",
-            	"name":"NOTIFY_LOW_BATERY",
+            	"name":"NOTIFY_LOW_BATTERY",
             	"file":"images/notify_low_battery.png"
             },
     	    {
