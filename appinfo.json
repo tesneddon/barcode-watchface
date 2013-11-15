@@ -3,74 +3,14 @@
     "shortName": "Barcode",
     "longName": "Barcode Watchface",
     "companyName": "Endless Software Solutions",
-    "versionCode": 2,
-    "versionLabel": "2.0.0",
+    "versionCode": 3,
+    "versionLabel": "2.1.0",
     "capabilities": [ "configurable" ],
     "watchapp": {
         "watchface": true
     },
     "resources": {
     	"media": [
-    	    {
-            	"type":"png",
-            	"name":"0",
-            	"file":"images/0.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"1",
-            	"file":"images/1.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"2",
-            	"file":"images/2.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"3",
-            	"file":"images/3.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"4",
-            	"file":"images/4.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"5",
-            	"file":"images/5.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"6",
-            	"file":"images/6.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"7",
-            	"file":"images/7.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"8",
-            	"file":"images/8.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"9",
-            	"file":"images/9.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"LEFT",
-            	"file":"images/left.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"RIGHT",
-            	"file":"images/right.png"
-            },
     	    {
             	"type":"png",
             	"name":"NOTIFY_NOT_CONNECTED",
