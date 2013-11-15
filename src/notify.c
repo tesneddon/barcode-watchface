@@ -87,18 +87,15 @@ void notify(const char *message,
 
     GBitmap *bmp;
 
-    switch (icon) {
-    case NOTIFY_FAILURE:
+    if (icon == NOTIFY_FAILURE) {
         bmp = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_FAILURE);
-	break;
-    case NOTIFY_SUCCESS:
+    } else if (icon == NOTIFY_SUCCESS) {
     	bmp = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_SUCCESS);
-	break;
-    default:
+    } else {
 	bmp = icon;
     }
     bitmap_layer_set_bitmap(warn_layer, icon);
-    if (bmp != icon) gbitmap_dsetory(bmp);
+    if (bmp != icon) gbitmap_destroy(bmp);
 
     text_layer_set_text(warn_text_layer, message);
     layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
