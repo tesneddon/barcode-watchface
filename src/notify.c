@@ -55,6 +55,7 @@
 **
 **      10-NOV-2013 V1.0    Sneddon     Initial coding.
 **	14-NOV-2013 V1.1    Sneddon	Add NOTIFY_[SUCCESS|FALIURE] constants.
+**	14-NOV-2013 V1.2    Sneddon	Changed to reduce heap footprint.
 **--
 */
 #include <pebble.h>
@@ -78,16 +79,26 @@
 */
 
     static bool subscribed = false;
-    static GBitmap *lowbatt, *btdisc, *tick, *cross;
     static BitmapLayer *warn_layer;
     static TextLayer *warn_text_layer;
 
 void notify(const char *message,
             GBitmap *icon) {
 
-    bitmap_layer_set_bitmap(warn_layer,
-			    (icon == NOTIFY_FAILURE ? cross :
-			     icon == NOTIFY_SUCCESS ? tick  : icon));
+    GBitmap *bmp;
+
+    switch (icon) {
+    case NOTIFY_FAILURE:
+        bmp = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_FAILURE);
+	break;
+    case NOTIFY_SUCCESS:
+    	bmp = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_SUCCESS);
+	break;
+    default:
+	bmp = icon;
+    }
+    bitmap_layer_set_bitmap(warn_layer, icon);
+    if (bmp != icon) gbitmap_dsetory(bmp);
 
     text_layer_set_text(warn_text_layer, message);
     layer_set_hidden(bitmap_layer_get_layer(warn_layer), false);
@@ -100,12 +111,6 @@ void notify_init(bool subscribe,
 		 Window *window) {
 
     Layer *window_layer = window_get_root_layer(window);
-
-    /*
-    ** Load graphics...
-    */
-    cross = gbitmap_create_with_resource(RESOURCE_ID_CROSS);
-    tick = gbitmap_create_with_resource(RESOURCE_ID_TICK);
 
     /*
     ** Initialize the layers.
@@ -124,17 +129,11 @@ void notify_init(bool subscribe,
 		    text_layer_get_layer(warn_text_layer));
 
     if (subscribe) {
-	subscribed = true;
-
-    	/*
-    	** Load graphics...
-    	*/
-    	lowbatt = gbitmap_create_with_resource(RESOURCE_ID_LOWBATT);
-    	btdisc = gbitmap_create_with_resource(RESOURCE_ID_BTDISC);
-
         /*
     	** Subscribe to event services.
     	*/
+	subscribed = true;
+
     	battery_state_service_subscribe(handle_battery);
     	bluetooth_connection_service_subscribe(handle_bluetooth);
     }
@@ -143,22 +142,14 @@ void notify_init(bool subscribe,
 void notify_deinit(void) {
 
     if (subscribed) {
-	subscribed = false;
     	/*
     	** Unsubscribe from all events.
     	*/
+	subscribed = false;
+
     	battery_state_service_unsubscribe();
     	bluetooth_connection_service_unsubscribe();
-
-    	/*
-    	** Destroy all bitmaps.
-    	*/
-    	gbitmap_destroy(btdisc);
-    	gbitmap_destroy(lowbatt);
     }
-
-    gbitmap_destroy(cross);
-    gbitmap_destroy(tick);
 
     /*
     ** Destroy all layers.
@@ -169,13 +160,16 @@ void notify_deinit(void) {
 
 static void handle_battery(BatteryChargeState charge) {
 
+    GBitmap *icon;
     static char discmsg[25];
 
     if (!charge.is_charging && !charge.is_plugged
 	&& (charge.charge_percent <= BATTERY_MINIMUM)) {
     	snprintf(discmsg, sizeof(discmsg), "Battery at %d%% Capacity",
 		 charge.charge_percent);
-	notify(discmsg, lowbatt);
+        icon = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_LOW_BATTERY);
+	notify(discmsg, icon);
+	gbitmap_destroy(icon);
     }
 }
 
@@ -183,9 +177,12 @@ static void handle_bluetooth(bool connected) {
 
     static const char connmsg[] = "Connection Restored";
     static const char discmsg[] = "Connection to Phone Lost";
+    GBitmap *icon;
 
     if (!connected) {
-	notify(discmsg, btdisc);
+        icon = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_NOT_CONNECTED);
+	notify(discmsg, icon);
+	gbitmap_destroy(icon);
     } else {
 	notify(connmsg, NOTIFY_SUCCESS);
     }

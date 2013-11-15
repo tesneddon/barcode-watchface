@@ -13,16 +13,6 @@
     	"media": [
     	    {
             	"type":"png",
-            	"name":"CROSS",
-            	"file":"images/cross.png"
-            },
-    	    {
-            	"type":"png",
-            	"name":"TICK",
-            	"file":"images/tick.png"
-            },
-    	    {
-            	"type":"png",
             	"name":"0",
             	"file":"images/0.png"
             },
@@ -83,13 +73,23 @@
             },
     	    {
             	"type":"png",
-            	"name":"BTDISC",
-            	"file":"images/btdisc.png"
+            	"name":"NOTIFY_NOT_CONNECTED",
+            	"file":"images/notify_not_connected.png"
             },
     	    {
             	"type":"png",
-            	"name":"LOWBATT",
-            	"file":"images/lowbatt.png"
+            	"name":"NOTIFY_LOW_BATERY",
+            	"file":"images/notify_low_battery.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"NOTIFY_FAILURE",
+            	"file":"images/notify_failure.png"
+            },
+    	    {
+            	"type":"png",
+            	"name":"NOTIFY_SUCCESS",
+            	"file":"images/notify_success.png"
             }
 	]
     }
