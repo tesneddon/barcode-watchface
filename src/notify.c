@@ -56,6 +56,8 @@
 **      10-NOV-2013 V1.0    Sneddon     Initial coding.
 **	14-NOV-2013 V1.1    Sneddon	Add NOTIFY_[SUCCESS|FALIURE] constants.
 **	14-NOV-2013 V1.2    Sneddon	Changed to reduce heap footprint.
+**	19-NOV-2013 V1.2-1  Sneddon	Now check to ensure that we are
+**                                      initialized or not.
 **--
 */
 #include <pebble.h>
@@ -78,7 +80,7 @@
 ** Own storage
 */
 
-    static bool subscribed = false;
+    static bool initialized = false, subscribed = false;
     static BitmapLayer *warn_layer;
     static TextLayer *warn_text_layer;
 
@@ -86,6 +88,8 @@ void notify(const char *message,
             GBitmap *icon) {
 
     GBitmap *bmp;
+
+    if (!initialized) return;
 
     if (icon == NOTIFY_FAILURE) {
         bmp = gbitmap_create_with_resource(RESOURCE_ID_NOTIFY_FAILURE);
@@ -108,6 +112,8 @@ void notify_init(bool subscribe,
 		 Window *window) {
 
     Layer *window_layer = window_get_root_layer(window);
+
+    if (initialized) return;
 
     /*
     ** Initialize the layers.
@@ -137,6 +143,8 @@ void notify_init(bool subscribe,
 }
 
 void notify_deinit(void) {
+
+    if (!initialized) return;
 
     if (subscribed) {
     	/*
